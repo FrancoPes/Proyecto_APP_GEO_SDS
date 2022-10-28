@@ -71,7 +71,7 @@ df.to_csv('TablaVieja.csv', index = False)
 
 ##-----------------------------------------------------------------------------------------------------------------
 #BLOQUE 5: ENVIO DE DATOS DEL USUARIO A UN ARCHIVO PARA REUTILIZARLOS
-lista_variables = [usuario_var, password_var, host_var, bd_var, tabla_cliente_var, tabla_localidad_var, tabla_provincia_var, tabla_pais_var, campo_idlocalidad_var, campo_idprovincia_var, campo_idpais_var, campo_domicilio_var, campo_localidad_var, campo_provincia_var, campo_pais_var]
+lista_variables = [usuario_var, password_var, host_var, bd_var, tabla_cliente_var, tabla_localidad_var, tabla_provincia_var, tabla_pais_var, tabla_cliente_var, campo_idlocalidad_var, campo_idprovincia_var, campo_idpais_var, campo_domicilio_var, campo_localidad_var, campo_provincia_var, campo_pais_var]
 diccionario_data = {'Variables':lista_variables}
 #convertimos en un dataframe
 df_data = pd.DataFrame(diccionario_data)
