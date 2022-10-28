@@ -2,6 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 import geocoder
 
+#ingestacion de los nombres de las tablas y campos
 
 
 
