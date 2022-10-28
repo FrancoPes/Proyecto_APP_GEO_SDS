@@ -1,6 +1,19 @@
 import pandas as pd
 from sqlalchemy import create_engine
 import geocoder
+
+
+
+
+
+
+
+
+
+
+
+
+
 #este archivo se ejecuta una sola vez
 # hacemos la conexion
                         #TipoBD_//usuario://password@localhost/baseDatos
