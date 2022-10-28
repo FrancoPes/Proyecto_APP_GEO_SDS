@@ -2,14 +2,47 @@ import pandas as pd
 from sqlalchemy import create_engine
 import geocoder
 
-# hacemos la conexion
-engine = create_engine('mysql://root:matias1997@localhost/prueba_python')
+# BLOQUE 1: HACEMOS LA CONEXION CON LOS DATOS REUTILIZADOS GUARDADOS EN EL ARCHIVO datosusuario.csv
+#abrimos la info de datosusuario.csv y la guardamos en una lista
+df_data = pd.read_csv('datos_usuario.csv', delimiter=',', encoding='utf-8')
+list_var = list(df_data['Variables'])
 
+# traemos los elementos de la lista a las variables pertenecientes
+usuario_var = list_var[0]
+password_var = list_var[1]
+host_var = list_var[2]
+bd_var = list_var[3]
+
+engine_concatenado = 'mysql://'+usuario_var+':'+password_var+'@'+host_var+'/'+bd_var
+engine = create_engine(engine_concatenado)
+
+# BLOQUE 2: HACEMOS LA COMPARACION ENTRE LA TABLA NUEVA Y LA TABLA VIEJA
+#-------------------------------------------------------------------------------------------------------------
+
+#LA TABLA VIEJA ESTA EN EL CSV CON LO CUAL SOLO LA LEVANTO
 df_tabla_vieja = pd.read_csv('TablaVieja.csv', delimiter=',', encoding='utf-8')
-df_tabla_nueva = pd.read_sql_query("select ID, Domicilio, Localidad, Provincia from clientes limit 10", engine)
+
+#LA TABLA NUEVA ES UNA CONSULTA A LA BASE DE DATOS
+#LA QUERY ES VARIABLE DEPENDIENDO DEL USUARIO. CON LO CUAL, DEBO TRAERME LOS DATOS GUARDADOS EN datos_usuario.csv
+tabla_cliente_var = list_var[4]
+tabla_localidad_var = list_var[5]
+tabla_provincia_var = list_var[6]
+tabla_pais_var = list_var[7]
+campo_idcliente_var = list_var[8]
+campo_idlocalidad_var = list_var[9]
+campo_idprovincia_var = list_var[10]
+campo_idpais_var = list_var[11]
+campo_domicilio_var = list_var[12]
+campo_localidad_var = list_var[13]
+campo_provincia_var = list_var[14]
+campo_pais_var = list_var[15]
+#query concatenada
+query_concat = "SELECT " + campo_idcliente_var +', '+ campo_domicilio_var +', '+ campo_localidad_var +', '+ campo_provincia_var +', '+ campo_pais_var + " from " + tabla_cliente_var + " c join " + tabla_localidad_var + " l on  (c." + campo_idlocalidad_var + " = l." + campo_idlocalidad_var + ") join " + tabla_provincia_var + " pr on (pr." + campo_idprovincia_var + " = l." + campo_idprovincia_var + ") join " + tabla_pais_var + " pa on (pa." + campo_idpais_var +" = pr." + campo_idpais_var +");"
+
+df_tabla_nueva = pd.read_sql_query(query_concat, engine)
 
 #agregamos el domicilio completa para
-df_tabla_nueva['domicilio_completo'] = df_tabla_nueva['Domicilio'] + ', ' + df_tabla_nueva['Localidad']
+df['domicilio_completo'] = df[campo_domicilio_var] + ', ' + df[campo_localidad_var] + ', ' +  df[campo_provincia_var] + ', ' + df[campo_pais_var]
 print(df_tabla_vieja)
 lista1 = list(df_tabla_vieja['domicilio_completo'])
 lista2 = list(df_tabla_nueva['domicilio_completo'])
@@ -33,7 +66,7 @@ else:
         df_tabla_nueva['LongCliente'] = df_tabla_nueva['domicilio_completo'].apply(longitud)
 
         #dropeamos tablas innecesarias 
-        df.drop(columns=['Domicilio', 'Localidad', 'Provincia'], inplace = True)
+        df_tabla_nueva.drop(columns=['Domicilio', 'Localidad', 'Provincia'], inplace = True)
         #actualiza la tabla bi_clientes_geo
         df_tabla_nueva.to_sql('bi_clientes_geo', con = engine, if_exists = 'replace')
         #esta tabla, pasa a ser la nueva de referencia
